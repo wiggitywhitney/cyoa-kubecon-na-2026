@@ -21,6 +21,10 @@ Before AI, we served our applications on Kubernetes in a distributed way, and we
 But now we're running Large Language Models on Kubernetes, and we have a whole new host of concerns on top of the ones we already had.
 
 We're going to give you three inference-serving challenges, let you choose how to solve each one, and then put your decisions to the test. Let's do it!
+
+**DISPLAY SWITCHING:** Cmd + F1 toggles mirror / extend.
+- To Viktor (Vote, each Deployment Status Check, The results): slides window in front, then Cmd + F1 to mirror.
+- Back to Whitney: Cmd + F1 to extend. Slides window on the projector, full screen (F). Presenter view on the laptop.
 -->
 
 ---
