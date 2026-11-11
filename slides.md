@@ -16,13 +16,13 @@ The Saga of Serving LLM Inference
 <img src="/vote-qr.png" alt="QR code to vote" style="height: 340px; margin: 24px auto 0;" />
 
 <!--
-Pre-AI, we served our applications on Kubernetes in a distributed way, and we were happy as clams.
+Before AI, we served our applications on Kubernetes in a distributed way, and we were happy as clams.
 
 We had it all figured out! We knew how to optimize our applications to get answers to our users as quickly as possible.
 
 But now we're running Large Language Models on Kubernetes and serving our users' interactions with those models. And we have a whole new set of concerns in addition to the ones we had before.
 
-That's what we're exploring today. We're going to give you three inference-serving challenges, let you choose how to solve each one, and then put your decisions to the test.
+That's what we're exploring today. We're going to give you three inference-serving challenges, let you choose how to solve each one, and then put your decisions to the test. Let's do it!
 
 -->
 
@@ -35,7 +35,7 @@ That's what we're exploring today. We're going to give you three inference-servi
 
 <!--
 
-But the goal of what we're doing today is...
+The goal of what we're doing today is...
 -->
 
 ---
@@ -82,6 +82,8 @@ It takes quite a long time to get the inference engines up and running.
 
 If you don’t understand these concepts that you’re voting about, don’t worry. I’ll explain everything later. Use your gut!
 
+And so with that, we'll go to Viktor.
+
 -->
 
 ---
@@ -116,8 +118,6 @@ An INFERENCE ENGINE is the software that runs an LLM and serves requests to it.
 
 <!--
 For the demo we're using vLLM
-
-Many model serving configuration choices happen at this inference engine layer.
 -->
 
 ---
@@ -236,8 +236,6 @@ So now what does it do with these inputs?
 
 <!--
 There's a lot of complex math
-
-So we have our inputs, we have our process, and then we have our model outputs.
 -->
 
 ---
@@ -278,8 +276,6 @@ Then the inference engine, not the model, chooses the next token from that score
 
 Okay. But what is the substance of a model?
 I kind of glossed over that math part.
-
-Well, a model is made up of two things.
 -->
 
 ---
@@ -554,7 +550,7 @@ And that is what we call the KV cache.
 # KV cache
 
 <!--
-Because the work of computing the next token is so intense, so resource intensive, we don't want our compute to have to do it more than once. So we save some of those intermediate calculations in the KV cache, and reuse them for every token after.
+We don't want our compute to have to do it more than once. So we save some of those intermediate calculations in the KV cache, and reuse them for every token after.
 -->
 
 ---
@@ -576,7 +572,7 @@ There's this constant struggle between the amount of GPU memory that the weights
 
 If you have a model with higher fidelity, then there's less room for conversations. If you have more conversations, there's less room for the model.
 
-But we thought, as humans, we can do better, right? It's not just one flat number that the model takes up. So we decided we're going to figure out a way to make the model weights take up less space in GPU memory.
+But we thought, as humans, we can do better, right? So we decided we're going to figure out a way to make the model weights take up less space in GPU memory.
 -->
 
 ---
@@ -690,8 +686,6 @@ The quantized version of Qwen3 can be 8-bit weights.
 <!--
 And finally, there are 4-bit weights. 
 
-The idea is: you use a little bit less space to store each weight, and the cost is some numerical fidelity.
-
 Why quantize?
 -->
 
@@ -772,7 +766,9 @@ You can probably guess...
 <!--
 It makes the model's answers slightly less in sync with its training. 
 
-How much does that translate into an inferior end experience for your end users? Honestly, that's something you probably want to run experiments about and see what works for your use case.
+To figure out whether to quantize and whether the quality trade-off is worth it, you need good observability, you need to run experiments, and then you need to figure out: does saving costs by quantizing affect our user experience, and how much?
+
+Later, when they're deployed, you'll be able to chat directly with each model being served. Can you tell which one is quantized? Is the quality difference detectable?
 
 Let's drive this home with a diagram.
 -->
@@ -831,8 +827,6 @@ class: diagram
 
 <!--
 Quantized, at 8-bit precision, the model takes up about 9 GB. Overhead is the same, so there's about 9.6 GB of conversations.
-
-Later, when they're deployed, you'll be able to chat directly with each model being served. Can you tell which one is quantized? Is the quality difference detectable?
 -->
 
 ---
@@ -900,8 +894,6 @@ class: diagram
 <!--
 With replication, we have a complete model on each GPU.
 
-The two GPUs never communicate with each other, and each one keeps its own KV cache.
-
 There are two separate inference engines, and then there's a router in place that helps know which request goes to which engine.
 
 **NO QUANTIZATION, NO SHARDING**
@@ -911,8 +903,6 @@ There are two separate inference engines, and then there's a router in place tha
 - **KV cache room:** ~3 GB per GPU
 - **Conversations that fit:** ~3 per copy, ~6 total
 - **GPUs talk:** never
-
-Or you can split the model onto multiple GPUs. Splitting it, by the way, is called...
 -->
 
 ---
@@ -926,8 +916,6 @@ class: diagram
 <!--
 With replication, we have a complete model on each GPU.
 
-The two GPUs never communicate with each other, and each one keeps its own KV cache.
-
 There are two separate inference engines, and then there's a router in place that helps know which request goes to which engine.
 
 **YES QUANTIZATION, NO SHARDING**
@@ -937,8 +925,6 @@ There are two separate inference engines, and then there's a router in place tha
 - **KV cache room:** ~9.6 GB per GPU
 - **Conversations that fit:** ~8.5 per copy, ~17 total
 - **GPUs talk:** never
-
-Or you can split the model onto multiple GPUs. Splitting it, by the way, is called...
 -->
 
 ---
@@ -946,8 +932,6 @@ Or you can split the model onto multiple GPUs. Splitting it, by the way, is call
 # Sharding
 
 <!--
-...sharding.
-
 Sharding is when one copy of a model is split across multiple GPUs, and those GPUs work together to serve each request.
 
 That looks like this...
@@ -1122,7 +1106,7 @@ With replication, the GPUs don't need to communicate with one another. Each GPU 
 </table>
 
 <!--
-With sharding, GPUs must communicate on every token, and that communication introduces both overhead and complexity.
+With sharding, GPUs must communicate on every token, and that communication introduces overhead.
 
 And finally, model size.
 -->
@@ -1169,7 +1153,7 @@ With sharding, we can serve a large model when splitting it across GPUs is the o
 <!--
 But which one is better? Replication or Sharding?
 
-The answer with anything tech is always "it depends."
+It depends.
 
 To help figure it out, ask yourself some questions. The first one is...
 -->
@@ -1186,7 +1170,7 @@ To help figure it out, ask yourself some questions. The first one is...
 
 If it's a lot, and each copy has plenty of room for conversations, replication is often better. Two copies serve requests at the same time, without waiting on each other.
 
-If it's only a few, sharding can be better. Each GPU reads only half the model for every token, so each request can come back faster.
+If it's only a few, sharding can be better.
 
 Now ask yourself...
 -->
@@ -1202,8 +1186,6 @@ Now ask yourself...
 ...How are your GPUs connected?
 
 Sharding works best when your GPUs can talk to each other fast, because they need to talk on every single token. GPUs in the same server with a fast link between them are great for sharding.
-
-If your GPUs are spread across different servers, all that talking adds up, and sharding across them usually isn't a great idea.
 -->
 
 ---
@@ -1416,13 +1398,7 @@ The limiting factor is often memory bandwidth.
 The model has the power to do these computations just fine, but it can't read all of those weights from memory over and over again fast enough. It's that step of reading the weights it needs at the moment that slows things down.
 
 So the question becomes: Is there a way to generate more than just one token each time we run through all those weights and do all that math?
--->
 
----
-
-# Is there a better way?
-
-<!--
 And that's where speculative decoding comes in.
 -->
 
@@ -1536,17 +1512,18 @@ Viktor talks about how quantization, sharding versus replication, and speculativ
 qr: false
 ---
 
-# The end!
+# So many links!
 
 <img src="/links-qr.png" alt="QR code to the talk links page" style="height: 420px; margin: 0 auto;" />
 
 <!--
-**SCRIPT ONLY**
+This QR code goes to whitneylee.com/KubeConNA2026, with links to:
 
-**Script:**
-Give a QR code to the repo. Or the slides. Or our individual websites. Whatever.
-
-The QR code goes to https://whitneylee.com/KubeConNA2026/ (links to both of you, the demo repo, ModelPlane, Datadog, and the session feedback form).
-
-**CHECK:** neither source has a closing line for you after Viktor's results. If you want a wrap-up, it needs your words.
+- Session feedback form
+- Demo: github.com/vfarcic/inference-vote
+- Slides: wiggitywhitney.github.io/cyoa-kubecon-na-2026
+- ModelPlane: github.com/modelplaneai/modelplane
+- Datadog: datadoghq.com
+- Whitney Lee: whitneylee.com and YouTube
+- Viktor Farcic: devopstoolkit.live and YouTube
 -->
