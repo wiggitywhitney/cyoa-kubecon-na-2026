@@ -1,0 +1,140 @@
+/* Spacing and weight adjustments on top of the eloc theme */
+
+/* Regular weight body text instead of eloc's light (300), so it reads from the back of a big room */
+.slidev-layout {
+  font-weight: 400;
+}
+
+/* Pull the text under a heading closer to it (eloc leaves 0.8em below every heading) */
+.slidev-layout h1 {
+  font-size: 84px;
+  line-height: 1.1;
+  margin-bottom: 0.3em;
+  text-align: center;
+}
+
+/* Body text closer in size to the headings (eloc's default is 40px against 104px headings) */
+.slidev-layout p,
+.slidev-layout li {
+  font-size: 50px;
+}
+
+.slidev-layout p,
+.slidev-layout h1 + p {
+  margin-top: 0.4em;
+  margin-bottom: 0.4em;
+}
+
+/* Keep lists centered as a block, with their lines left-aligned */
+.slidev-layout ul,
+.slidev-layout ol {
+  display: inline-block;
+  text-align: left;
+  margin-top: 0.6em;
+}
+
+/* Progressive reveal: points not revealed yet are on the slide in the background color, so nothing shifts when they appear */
+.slidev-layout .hide,
+.slidev-layout .hide::marker {
+  color: white;
+}
+
+/* Hidden diagram parts keep their space too (backgrounds and borders included) */
+.slidev-layout .hide {
+  visibility: hidden;
+}
+
+/* GPU memory bar diagrams: one bar per GPU, segments sized to GiB */
+.gpu {
+  width: 1250px;
+  margin: 0.4em 0;
+  text-align: left;
+}
+.gpu-label {
+  font-size: 30px;
+  font-weight: 700;
+  margin-bottom: 0.2em;
+}
+.gpu-bar {
+  display: flex;
+  height: 80px;
+  border: 3px solid #111;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.gpu-seg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.gpu-seg.weights { background: #1d74e8; color: #fff; }
+.gpu-seg.kv { background: #14b866; color: #fff; }
+.gpu-seg.other { background: #fbb52b; color: #111; }
+.gpu-caption {
+  font-size: 28px;
+  margin-top: 0.2em;
+}
+.gpu-legend {
+  font-size: 24px;
+  margin-top: 0.6em;
+}
+
+/* Diagram slides (class: diagram in the slide's frontmatter): smaller heading to leave room */
+.slidev-layout.diagram h1 {
+  font-size: 64px;
+  margin-bottom: 0.2em;
+}
+
+/* Request flow diagrams: boxes, arrows, GPUs */
+.flow { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.node { border: 3px solid #111; border-radius: 10px; padding: 2px 26px; font-size: 28px; font-weight: 700; background: #f4f4f4; }
+.arrow { font-size: 32px; line-height: 1; font-weight: 700; }
+.lane-row { display: flex; gap: 36px; justify-content: center; align-items: flex-start; }
+.lane { display: flex; flex-direction: column; align-items: center; gap: 4px; }
+.gpu-box { border: 3px solid #111; border-radius: 10px; padding: 6px 12px 10px; width: 600px; background: #fafafa; }
+.gpu-title { font-size: 24px; font-weight: 700; text-align: center; margin-bottom: 4px; }
+.gpu-box .gpu-bar { height: 62px; }
+.gpu-box .gpu-seg { font-size: 18px; }
+.shard-group { border: 3px dashed #555; border-radius: 14px; padding: 10px 14px; display: flex; gap: 14px; align-items: center; }
+.link { font-size: 40px; font-weight: 700; }
+.diagram-caption { font-size: 26px; margin-top: 10px; }
+.slidev-layout p.diagram-sub { font-size: 30px; margin: 0 0 6px; }
+
+/* "Levels of precision": bit patterns and values, left-aligned so the patterns visibly shrink */
+.ladder { display: inline-block; text-align: left; }
+.ladder p { font-size: 40px; margin: 0.25em 0; white-space: nowrap; }
+.ladder .rung { display: inline-block; width: 3.2em; font-weight: 700; }
+.ladder .bits { font-family: "Roboto Mono", "Fira Code", Menlo, monospace; font-size: 34px; letter-spacing: 0.02em; }
+
+/* Two-copy diagrams get wider GPU boxes so the narrow full-precision KV Cache segment keeps its label */
+.lane .gpu-box { width: 700px; }
+
+/* Replication vs. sharding comparison table: fills in one cell at a time */
+.slidev-layout table.compare { border-collapse: collapse; font-size: 36px; margin-top: 0.2em; width: auto; }
+.slidev-layout table.compare th,
+.slidev-layout table.compare td { padding: 8px 24px; text-align: left; vertical-align: top; border: none; }
+.slidev-layout table.compare th { font-weight: 700; font-size: 42px; }
+.slidev-layout table.compare tr { border-bottom: 3px solid #111; }
+.slidev-layout table.compare tr:last-child { border-bottom: none; }
+.slidev-layout table.compare .row-label { font-weight: 700; white-space: nowrap; }
+.slidev-layout table.compare td:nth-child(2),
+.slidev-layout table.compare td:nth-child(3) { width: 540px; }
+
+/* Speculative decoding walkthrough: a row of draft tokens */
+.spec-flow { display: flex; gap: 80px; justify-content: center; align-items: center; margin-top: 40px; }
+.spec-col { display: flex; flex-direction: column; align-items: center; gap: 18px; margin-top: 30px; }
+.spec-flow .node, .spec-col .node { font-size: 40px; padding: 8px 36px; }
+.toks { display: flex; gap: 22px; align-items: center; justify-content: center; }
+.tok { width: 120px; height: 120px; border: 5px solid #111; border-radius: 14px; background: #fff;
+       display: flex; align-items: center; justify-content: center; font-size: 52px; font-weight: 700; }
+.tok.ok { background: #14b866; border-color: #14b866; color: #fff; }
+.tok.bad { background: #e5484d; border-color: #e5484d; color: #fff; }
+.tok.model { background: #1d74e8; border-color: #1d74e8; color: #fff; }
+.tok.gone { opacity: 0.2; }
+.tok-col { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.tok-score { width: 120px; height: 22px; border-radius: 6px; background: #fbb52b; }
+.tok-link { font-size: 48px; font-weight: 700; }
