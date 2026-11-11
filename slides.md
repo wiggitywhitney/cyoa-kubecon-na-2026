@@ -18,12 +18,9 @@ The Saga of Serving LLM Inference
 <!--
 Before AI, we served our applications on Kubernetes in a distributed way, and we were happy as clams.
 
-We had it all figured out! We knew how to optimize our applications to get answers to our users as quickly as possible.
+But now we're running Large Language Models on Kubernetes, and we have a whole new host of concerns on top of the ones we already had.
 
-But now we're running Large Language Models on Kubernetes and serving our users' interactions with those models. And we have a whole new set of concerns in addition to the ones we had before.
-
-That's what we're exploring today. We're going to give you three inference-serving challenges, let you choose how to solve each one, and then put your decisions to the test. Let's do it!
-
+We're going to give you three inference-serving challenges, let you choose how to solve each one, and then put your decisions to the test. Let's do it!
 -->
 
 ---
